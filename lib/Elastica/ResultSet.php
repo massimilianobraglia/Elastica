@@ -40,7 +40,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @var Result[] Results
      */
-    private $_results = [];
+    private $_results;
 
     /**
      * Constructs ResultSet object.
@@ -49,7 +49,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      * @param Query    $query    Query object
      * @param Result[] $results
      */
-    public function __construct(Response $response, Query $query, $results)
+    public function __construct(Response $response, Query $query, array $results)
     {
         $this->_query = $query;
         $this->_response = $response;
@@ -61,7 +61,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return Result[] Results
      */
-    public function getResults()
+    public function getResults(): array
     {
         return $this->_results;
     }
@@ -69,9 +69,9 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
     /**
      * Returns all Documents.
      *
-     * @return array Documents \Elastica\Document
+     * @return Document[]
      */
-    public function getDocuments()
+    public function getDocuments(): array
     {
         $documents = [];
         foreach ($this->_results as $doc) {
@@ -86,7 +86,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return bool
      */
-    public function hasSuggests()
+    public function hasSuggests(): bool
     {
         $data = $this->_response->getData();
 
@@ -98,7 +98,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return array suggest results
      */
-    public function getSuggests()
+    public function getSuggests(): array
     {
         $data = $this->_response->getData();
 
@@ -110,7 +110,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return bool Aggregation existence
      */
-    public function hasAggregations()
+    public function hasAggregations(): bool
     {
         $data = $this->_response->getData();
 
@@ -122,7 +122,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return array
      */
-    public function getAggregations()
+    public function getAggregations(): array
     {
         $data = $this->_response->getData();
 
@@ -134,17 +134,18 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @param string $name the name of the desired aggregation
      *
-     * @throws Exception\InvalidException if an aggregation by the given name cannot be found
+     * @throws InvalidException if an aggregation by the given name cannot be found
      *
      * @return array
      */
-    public function getAggregation($name)
+    public function getAggregation(string $name): array
     {
         $data = $this->_response->getData();
 
         if (isset($data['aggregations']) && isset($data['aggregations'][$name])) {
             return $data['aggregations'][$name];
         }
+
         throw new InvalidException("This result set does not contain an aggregation named {$name}.");
     }
 
@@ -153,11 +154,11 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return int Total hits
      */
-    public function getTotalHits()
+    public function getTotalHits(): int
     {
         $data = $this->_response->getData();
 
-        return (int) ($data['hits']['total'] ?? 0);
+        return $data['hits']['total'] ?? 0;
     }
 
     /**
@@ -165,11 +166,11 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return float Max Score
      */
-    public function getMaxScore()
+    public function getMaxScore(): float
     {
         $data = $this->_response->getData();
 
-        return (float) ($data['hits']['max_score'] ?? 0);
+        return $data['hits']['max_score'] ?? 0.0;
     }
 
     /**
@@ -177,7 +178,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return int Total time
      */
-    public function getTotalTime()
+    public function getTotalTime(): int
     {
         $data = $this->_response->getData();
 
@@ -189,7 +190,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return bool Timed out
      */
-    public function hasTimedOut()
+    public function hasTimedOut(): bool
     {
         $data = $this->_response->getData();
 
@@ -201,7 +202,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return Response Response object
      */
-    public function getResponse()
+    public function getResponse(): Response
     {
         return $this->_response;
     }
@@ -209,7 +210,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
     /**
      * @return Query
      */
-    public function getQuery()
+    public function getQuery(): Query
     {
         return $this->_query;
     }
@@ -217,9 +218,9 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
     /**
      * Returns size of current set.
      *
-     * @return int Size of set
+     * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->_results);
     }
@@ -229,23 +230,21 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
      *
      * @return int Size of suggests
      */
-    public function countSuggests()
+    public function countSuggests(): int
     {
-        return sizeof($this->getSuggests());
+        return count($this->getSuggests());
     }
 
     /**
-     * Returns the current object of the set.
-     *
-     * @return \Elastica\Result Set object
+     * {@inheritdoc}
      */
-    public function current()
+    public function current(): Result
     {
         return $this->_results[$this->key()];
     }
 
     /**
-     * Sets pointer (current) to the next item of the set.
+     * {@inheritdoc}
      */
     public function next()
     {
@@ -253,27 +252,23 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Returns the position of the current entry.
-     *
-     * @return int Current position
+     * {@inheritdoc}
      */
-    public function key()
+    public function key(): int
     {
         return $this->_position;
     }
 
     /**
-     * Check if an object exists at the current position.
-     *
-     * @return bool True if object exists
+     * {@inheritdoc}
      */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->_results[$this->key()]);
     }
 
     /**
-     * Resets position to 0, restarts iterator.
+     * {@inheritdoc}
      */
     public function rewind()
     {
@@ -281,31 +276,17 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Whether a offset exists.
-     *
-     * @see http://php.net/manual/en/arrayaccess.offsetexists.php
-     *
-     * @param int $offset
-     *
-     * @return bool true on success or false on failure
+     * {@inheritdoc}
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->_results[$offset]);
     }
 
     /**
-     * Offset to retrieve.
-     *
-     * @see http://php.net/manual/en/arrayaccess.offsetget.php
-     *
-     * @param int $offset
-     *
-     * @throws Exception\InvalidException If offset doesn't exist
-     *
-     * @return Result
+     * {@inheritdoc}
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): Result
     {
         if ($this->offsetExists($offset)) {
             return $this->_results[$offset];
@@ -315,14 +296,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Offset to set.
-     *
-     * @see http://php.net/manual/en/arrayaccess.offsetset.php
-     *
-     * @param int    $offset
-     * @param Result $value
-     *
-     * @throws Exception\InvalidException
+     * {@inheritdoc}
      */
     public function offsetSet($offset, $value)
     {
@@ -338,11 +312,7 @@ class ResultSet implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Offset to unset.
-     *
-     * @see http://php.net/manual/en/arrayaccess.offsetunset.php
-     *
-     * @param int $offset
+     * {@inheritdoc}
      */
     public function offsetUnset($offset)
     {

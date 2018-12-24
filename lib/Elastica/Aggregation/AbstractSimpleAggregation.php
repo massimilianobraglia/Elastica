@@ -33,7 +33,7 @@ abstract class AbstractSimpleAggregation extends AbstractAggregation
     /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         if (!$this->hasParam('field') && !$this->hasParam('script')) {
             throw new InvalidException(

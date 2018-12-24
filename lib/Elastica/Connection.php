@@ -68,7 +68,7 @@ class Connection extends Param
     /**
      * @return int Server port
      */
-    public function getPort()
+    public function getPort(): int
     {
         return $this->hasParam('port') ? $this->getParam('port') : self::DEFAULT_PORT;
     }
@@ -78,15 +78,15 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function setPort($port)
+    public function setPort(int $port): self
     {
-        return $this->setParam('port', (int) $port);
+        return $this->setParam('port', $port);
     }
 
     /**
      * @return string Host
      */
-    public function getHost()
+    public function getHost(): string
     {
         return $this->hasParam('host') ? $this->getParam('host') : self::DEFAULT_HOST;
     }
@@ -96,7 +96,7 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function setHost($host)
+    public function setHost(string $host): self
     {
         return $this->setParam('host', $host);
     }
@@ -119,7 +119,7 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function setProxy($proxy)
+    public function setProxy(string $proxy = null): self
     {
         return $this->setParam('proxy', $proxy);
     }
@@ -137,7 +137,7 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function setTransport($transport)
+    public function setTransport($transport): self
     {
         return $this->setParam('transport', $transport);
     }
@@ -145,17 +145,17 @@ class Connection extends Param
     /**
      * @return bool
      */
-    public function hasCompression()
+    public function hasCompression(): bool
     {
-        return (bool) $this->hasParam('compression') ? $this->getParam('compression') : self::DEFAULT_COMPRESSION;
+        return $this->hasParam('compression') ? $this->getParam('compression') : self::DEFAULT_COMPRESSION;
     }
 
     /**
-     * @param bool $compression
+     * @param bool|null $compression
      *
      * @return $this
      */
-    public function setCompression($compression = null)
+    public function setCompression(bool $compression = null): self
     {
         return $this->setParam('compression', $compression);
     }
@@ -163,7 +163,7 @@ class Connection extends Param
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->hasParam('path') ? $this->getParam('path') : '';
     }
@@ -173,7 +173,7 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function setPath($path)
+    public function setPath(string $path): self
     {
         return $this->setParam('path', $path);
     }
@@ -183,7 +183,7 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function setTimeout($timeout)
+    public function setTimeout(int $timeout): self
     {
         return $this->setParam('timeout', $timeout);
     }
@@ -191,9 +191,9 @@ class Connection extends Param
     /**
      * @return int Connection timeout in seconds
      */
-    public function getTimeout()
+    public function getTimeout(): int
     {
-        return (int) $this->hasParam('timeout') ? $this->getParam('timeout') : self::TIMEOUT;
+        return $this->hasParam('timeout') ? $this->getParam('timeout') : self::TIMEOUT;
     }
 
     /**
@@ -208,7 +208,7 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function setConnectTimeout($timeout)
+    public function setConnectTimeout(int $timeout): self
     {
         return $this->setParam('connectTimeout', $timeout);
     }
@@ -216,9 +216,9 @@ class Connection extends Param
     /**
      * @return int Connection timeout in seconds
      */
-    public function getConnectTimeout()
+    public function getConnectTimeout(): int
     {
-        return (int) $this->hasParam('connectTimeout') ? $this->getParam('connectTimeout') : self::CONNECT_TIMEOUT;
+        return $this->hasParam('connectTimeout') ? $this->getParam('connectTimeout') : self::CONNECT_TIMEOUT;
     }
 
     /**
@@ -228,7 +228,7 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function setEnabled($enabled = true)
+    public function setEnabled(bool $enabled = true): self
     {
         return $this->setParam('enabled', $enabled);
     }
@@ -236,19 +236,19 @@ class Connection extends Param
     /**
      * @return bool True if enabled
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
-        return (bool) $this->getParam('enabled');
+        return $this->getParam('enabled');
     }
 
     /**
      * Returns an instance of the transport type.
      *
-     * @throws \Elastica\Exception\InvalidException If invalid transport type
+     * @throws InvalidException If invalid transport type
      *
-     * @return \Elastica\Transport\AbstractTransport Transport object
+     * @return AbstractTransport Transport object
      */
-    public function getTransportObject()
+    public function getTransportObject(): AbstractTransport
     {
         $transport = $this->getTransport();
 
@@ -258,9 +258,9 @@ class Connection extends Param
     /**
      * @return bool Returns true if connection is persistent. True by default
      */
-    public function isPersistent()
+    public function isPersistent(): bool
     {
-        return (bool) $this->hasParam('persistent') ? $this->getParam('persistent') : true;
+        return $this->hasParam('persistent') ? $this->getParam('persistent') : true;
     }
 
     /**
@@ -268,7 +268,7 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): self
     {
         return $this->setParam('config', $config);
     }
@@ -279,7 +279,7 @@ class Connection extends Param
      *
      * @return $this
      */
-    public function addConfig($key, $value)
+    public function addConfig(string $key, $value): self
     {
         $this->_params['config'][$key] = $value;
 
@@ -291,7 +291,7 @@ class Connection extends Param
      *
      * @return bool
      */
-    public function hasConfig($key)
+    public function hasConfig(string $key): bool
     {
         $config = $this->getConfig();
 
@@ -304,11 +304,11 @@ class Connection extends Param
      *
      * @param string $key Config key
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
      * @return array|string Config value
      */
-    public function getConfig($key = '')
+    public function getConfig(string $key = '')
     {
         $config = $this->getParam('config');
         if (empty($key)) {
@@ -323,13 +323,13 @@ class Connection extends Param
     }
 
     /**
-     * @param \Elastica\Connection|array $params Params to create a connection
+     * @param Connection|array $params Params to create a connection
      *
      * @throws Exception\InvalidException
      *
      * @return self
      */
-    public static function create($params = [])
+    public static function create($params = []): self
     {
         if (is_array($params)) {
             return new self($params);

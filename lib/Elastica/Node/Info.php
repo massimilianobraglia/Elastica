@@ -173,7 +173,7 @@ class Info
     }
 
     /**
-     * @return string Unique node id
+     * @return string|int Unique node id
      */
     public function getId(): string
     {

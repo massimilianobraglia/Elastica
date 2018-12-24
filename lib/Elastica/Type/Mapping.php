@@ -181,13 +181,9 @@ class Mapping
     }
 
     /**
-     * Converts the mapping to an array.
-     *
-     * @throws InvalidException
-     *
-     * @return array Mapping as array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         $type = $this->getType();
 

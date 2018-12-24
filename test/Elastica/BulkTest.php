@@ -31,7 +31,7 @@ class BulkTest extends BaseTest
         $newDocument1 = $type->createDocument(1, ['name' => 'Mister Fantastic']);
         $newDocument2 = new Document(2, ['name' => 'Invisible Woman']);
         $newDocument3 = $type->createDocument(3, ['name' => 'The Human Torch']);
-        $newDocument4 = $type->createDocument(null, ['name' => 'The Thing']);
+        $newDocument4 = $type->createDocument('', ['name' => 'The Thing']);
 
         $newDocument3->setOpType(Document::OP_TYPE_CREATE);
 

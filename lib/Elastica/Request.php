@@ -27,17 +27,21 @@ class Request extends Param
     /**
      * Construct.
      *
-     * @param string     $path        Request path
-     * @param string     $method      OPTIONAL Request method (use const's) (default = self::GET)
-     * @param array      $data        OPTIONAL Data array
-     * @param array      $query       OPTIONAL Query params
-     * @param Connection $connection
-     * @param string     $contentType Content-Type sent with this request
-     *
-     * @return \Elastica\Request OPTIONAL Connection object
+     * @param string       $path        Request path
+     * @param string       $method      OPTIONAL Request method (use const's) (default = self::GET)
+     * @param array|string $data        OPTIONAL Data array
+     * @param array        $query       OPTIONAL Query params
+     * @param Connection   $connection
+     * @param string       $contentType Content-Type sent with this request
      */
-    public function __construct($path, $method = self::GET, $data = [], array $query = [], Connection $connection = null, $contentType = self::DEFAULT_CONTENT_TYPE)
-    {
+    public function __construct(
+        string $path,
+        string $method = self::GET,
+        $data = [],
+        array $query = [],
+        Connection $connection = null,
+        string $contentType = self::DEFAULT_CONTENT_TYPE
+    ) {
         $this->setPath($path);
         $this->setMethod($method);
         $this->setData($data);
@@ -56,7 +60,7 @@ class Request extends Param
      *
      * @return $this
      */
-    public function setMethod($method)
+    public function setMethod(string $method): self
     {
         return $this->setParam('method', $method);
     }
@@ -66,7 +70,7 @@ class Request extends Param
      *
      * @return string Request method
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->getParam('method');
     }
@@ -74,11 +78,11 @@ class Request extends Param
     /**
      * Sets the request data.
      *
-     * @param array $data Request data
+     * @param array|string $data Request data
      *
      * @return $this
      */
-    public function setData($data)
+    public function setData($data): self
     {
         return $this->setParam('data', $data);
     }
@@ -86,7 +90,7 @@ class Request extends Param
     /**
      * Return request data.
      *
-     * @return array Request data
+     * @return array|string Request data
      */
     public function getData()
     {
@@ -100,7 +104,7 @@ class Request extends Param
      *
      * @return $this
      */
-    public function setPath($path)
+    public function setPath(string $path): self
     {
         return $this->setParam('path', $path);
     }
@@ -110,7 +114,7 @@ class Request extends Param
      *
      * @return string Request path
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->getParam('path');
     }
@@ -120,7 +124,7 @@ class Request extends Param
      *
      * @return array Query params
      */
-    public function getQuery()
+    public function getQuery(): array
     {
         return $this->getParam('query');
     }
@@ -130,17 +134,17 @@ class Request extends Param
      *
      * @return $this
      */
-    public function setQuery(array $query = [])
+    public function setQuery(array $query = []): self
     {
         return $this->setParam('query', $query);
     }
 
     /**
-     * @param \Elastica\Connection $connection
+     * @param Connection $connection
      *
      * @return $this
      */
-    public function setConnection(Connection $connection)
+    public function setConnection(Connection $connection): self
     {
         $this->_connection = $connection;
 
@@ -150,13 +154,13 @@ class Request extends Param
     /**
      * Return Connection Object.
      *
-     * @throws Exception\InvalidException If no valid connection was setted
+     * @throws InvalidException If no valid connection was setted
      *
-     * @return \Elastica\Connection
+     * @return Connection
      */
-    public function getConnection()
+    public function getConnection(): Connection
     {
-        if (empty($this->_connection)) {
+        if (null === $this->_connection) {
             throw new InvalidException('No valid connection object set');
         }
 
@@ -167,8 +171,10 @@ class Request extends Param
      * Set the Content-Type of this request.
      *
      * @param string $contentType
+     *
+     * @return $this
      */
-    public function setContentType($contentType)
+    public function setContentType(string $contentType): self
     {
         return $this->setParam('contentType', $contentType);
     }
@@ -176,7 +182,7 @@ class Request extends Param
     /**
      * Get the Content-Type of this request.
      */
-    public function getContentType()
+    public function getContentType(): string
     {
         return $this->getParam('contentType');
     }
@@ -184,9 +190,9 @@ class Request extends Param
     /**
      * Sends request to server.
      *
-     * @return \Elastica\Response Response object
+     * @return Response Response object
      */
-    public function send()
+    public function send(): Response
     {
         $transport = $this->getConnection()->getTransportObject();
 
@@ -195,7 +201,7 @@ class Request extends Param
     }
 
     /**
-     * @return array
+     *{@inheritdoc}
      */
     public function toArray()
     {
@@ -212,15 +218,15 @@ class Request extends Param
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return JSON::stringify($this->toArray());
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->toString();
     }

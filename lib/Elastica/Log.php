@@ -41,8 +41,6 @@ class Log extends AbstractLogger
      * @param mixed  $level
      * @param string $message
      * @param array  $context
-     *
-     * @return void|null
      */
     public function log($level, $message, array $context = [])
     {
@@ -63,7 +61,7 @@ class Log extends AbstractLogger
      *
      * @return $this
      */
-    public function setLog($log)
+    public function setLog($log): self
     {
         $this->_log = $log;
 
@@ -75,7 +73,7 @@ class Log extends AbstractLogger
      *
      * @return string Last logged message
      */
-    public function getLastMessage()
+    public function getLastMessage(): string
     {
         return $this->_lastMessage;
     }

@@ -61,11 +61,9 @@ class Derivative extends AbstractAggregation
     }
 
     /**
-     * @throws InvalidException If buckets path or script is not set
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         if (!$this->hasParam('buckets_path')) {
             throw new InvalidException('Buckets path is required');

@@ -76,9 +76,9 @@ class Filters extends AbstractAggregation
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         $array = [];
         $filters = $this->getParam('filters');

@@ -3,11 +3,10 @@
 namespace Elastica;
 
 use Elastica\Bulk\Action;
-use Elastica\Bulk\Action\AbstractDocument as AbstractDocumentAction;
+use Elastica\Bulk\Action\AbstractDocument;
 use Elastica\Bulk\Response as BulkResponse;
 use Elastica\Bulk\ResponseSet;
 use Elastica\Exception\Bulk\ResponseException;
-use Elastica\Exception\Bulk\ResponseException as BulkResponseException;
 use Elastica\Exception\InvalidException;
 use Elastica\Script\AbstractScript;
 
@@ -172,7 +171,7 @@ class Bulk
      */
     public function addDocument(Document $document, string $opType = null): self
     {
-        $action = AbstractDocumentAction::create($document, $opType);
+        $action = AbstractDocument::create($document, $opType);
 
         return $this->addAction($action);
     }
@@ -200,33 +199,33 @@ class Bulk
      */
     public function addScript(AbstractScript $script, string $opType = null): self
     {
-        $action = AbstractDocumentAction::create($script, $opType);
+        $action = AbstractDocument::create($script, $opType);
 
         return $this->addAction($action);
     }
 
     /**
-     * @param Document[] $scripts
-     * @param string     $opType
+     * @param AbstractScript[] $scripts
+     * @param string           $opType
      *
      * @return $this
      */
-    public function addScripts(array $scripts, $opType = null): self
+    public function addScripts(array $scripts, string $opType = null): self
     {
-        foreach ($scripts as $document) {
-            $this->addScript($document, $opType);
+        foreach ($scripts as $script) {
+            $this->addScript($script, $opType);
         }
 
         return $this;
     }
 
     /**
-     * @param \Elastica\Script\AbstractScript|\Elastica\Document|array $data
-     * @param string                                                   $opType
+     * @param AbstractScript|Document|array $data
+     * @param string                        $opType
      *
      * @return $this
      */
-    public function addData($data, string $opType = null)
+    public function addData($data, string $opType = null): self
     {
         if (!is_array($data)) {
             $data = [$data];
@@ -334,9 +333,9 @@ class Bulk
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         $data = [];
         foreach ($this->getActions() as $action) {
@@ -388,7 +387,7 @@ class Bulk
                 $opType = key($item);
                 $bulkResponseData = reset($item);
 
-                if ($action instanceof AbstractDocumentAction) {
+                if ($action instanceof AbstractDocument) {
                     $data = $action->getData();
                     if ($data instanceof Document && $data->isAutoPopulate()
                         || $this->_client->getConfigValue(['document', 'autoPopulate'], false)
@@ -409,7 +408,7 @@ class Bulk
         $bulkResponseSet = new ResponseSet($response, $bulkResponses);
 
         if ($bulkResponseSet->hasError()) {
-            throw new BulkResponseException($bulkResponseSet);
+            throw new ResponseException($bulkResponseSet);
         }
 
         return $bulkResponseSet;

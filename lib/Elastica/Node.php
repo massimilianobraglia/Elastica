@@ -15,12 +15,12 @@ class Node
     /**
      * Client.
      *
-     * @var \Elastica\Client
+     * @var Client
      */
     protected $_client;
 
     /**
-     * @var string Unique node id
+     * @var string|int Unique node id
      */
     protected $_id;
 
@@ -34,22 +34,22 @@ class Node
     /**
      * Node stats.
      *
-     * @var \Elastica\Node\Stats|null Node Stats
+     * @var Stats|null Node Stats
      */
     protected $_stats;
 
     /**
      * Node info.
      *
-     * @var \Elastica\Node\Info|null Node info
+     * @var Info|null Node info
      */
     protected $_info;
 
     /**
      * Create a new node object.
      *
-     * @param string           $id     Node id or name
-     * @param \Elastica\Client $client Node object
+     * @param string|int $id     Node id or name
+     * @param Client     $client Node object
      */
     public function __construct($id, Client $client)
     {
@@ -58,7 +58,7 @@ class Node
     }
 
     /**
-     * @return string Unique node id. Can also be name if id not exists.
+     * @return string|int Unique node id. Can also be name if id not exists.
      */
     public function getId()
     {
@@ -70,11 +70,12 @@ class Node
      *
      * @return $this Refreshed object
      */
-    public function setId($id)
+    public function setId($id): self
     {
         $this->_id = $id;
+        $this->refresh();
 
-        return $this->refresh();
+        return $this;
     }
 
     /**
@@ -82,9 +83,9 @@ class Node
      *
      * @return string Node name
      */
-    public function getName()
+    public function getName(): string
     {
-        if (empty($this->_name)) {
+        if (null === $this->_name) {
             $this->_name = $this->getInfo()->getName();
         }
 
@@ -94,9 +95,9 @@ class Node
     /**
      * Returns the current client object.
      *
-     * @return \Elastica\Client Client
+     * @return Client Client
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->_client;
     }
@@ -106,11 +107,11 @@ class Node
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
      *
-     * @return \Elastica\Node\Stats Node stats
+     * @return Stats Node stats
      */
-    public function getStats()
+    public function getStats(): Stats
     {
-        if (!$this->_stats) {
+        if (null === $this->_stats) {
             $this->_stats = new Stats($this);
         }
 
@@ -122,11 +123,11 @@ class Node
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html
      *
-     * @return \Elastica\Node\Info Node info object
+     * @return Info Node info object
      */
-    public function getInfo()
+    public function getInfo(): Info
     {
-        if (!$this->_info) {
+        if (null === $this->_info) {
             $this->_info = new Info($this);
         }
 

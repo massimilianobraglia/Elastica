@@ -54,7 +54,7 @@ class Document extends AbstractUpdateAction
      *
      * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key)
     {
         return $this->get($key);
     }
@@ -63,7 +63,7 @@ class Document extends AbstractUpdateAction
      * @param string $key
      * @param mixed  $value
      */
-    public function __set($key, $value)
+    public function __set(string $key, $value)
     {
         $this->set($key, $value);
     }
@@ -73,7 +73,7 @@ class Document extends AbstractUpdateAction
      *
      * @return bool
      */
-    public function __isset($key)
+    public function __isset(string $key): bool
     {
         return $this->has($key) && null !== $this->get($key);
     }
@@ -81,7 +81,7 @@ class Document extends AbstractUpdateAction
     /**
      * @param string $key
      */
-    public function __unset($key)
+    public function __unset(string $key)
     {
         $this->remove($key);
     }
@@ -89,11 +89,11 @@ class Document extends AbstractUpdateAction
     /**
      * @param string $key
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
      * @return mixed
      */
-    public function get($key)
+    public function get(string $key)
     {
         if (!$this->has($key)) {
             throw new InvalidException("Field {$key} does not exist");
@@ -106,11 +106,11 @@ class Document extends AbstractUpdateAction
      * @param string $key
      * @param mixed  $value
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
      * @return $this
      */
-    public function set($key, $value)
+    public function set(string $key, $value): self
     {
         if (!is_array($this->_data)) {
             throw new InvalidException('Document data is serialized data. Data creation is forbidden.');
@@ -125,7 +125,7 @@ class Document extends AbstractUpdateAction
      *
      * @return bool
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         return is_array($this->_data) && array_key_exists($key, $this->_data);
     }
@@ -133,11 +133,11 @@ class Document extends AbstractUpdateAction
     /**
      * @param string $key
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
      * @return $this
      */
-    public function remove($key)
+    public function remove(string $key): self
     {
         if (!$this->has($key)) {
             throw new InvalidException("Field {$key} does not exist");
@@ -164,7 +164,7 @@ class Document extends AbstractUpdateAction
      *
      * @return $this
      */
-    public function addFile($key, $filepath, $mimeType = '')
+    public function addFile(string $key, string $filepath, string $mimeType = ''): self
     {
         $value = base64_encode(file_get_contents($filepath));
 
@@ -185,7 +185,7 @@ class Document extends AbstractUpdateAction
      *
      * @return $this
      */
-    public function addFileContent($key, $content)
+    public function addFileContent(string $key, string $content): self
     {
         return $this->set($key, base64_encode($content));
     }
@@ -203,7 +203,7 @@ class Document extends AbstractUpdateAction
      *
      * @return $this
      */
-    public function addGeoPoint($key, $latitude, $longitude)
+    public function addGeoPoint(string $key, float $latitude, float $longitude): self
     {
         $value = ['lat' => $latitude, 'lon' => $longitude];
 
@@ -219,7 +219,7 @@ class Document extends AbstractUpdateAction
      *
      * @return $this
      */
-    public function setData($data)
+    public function setData($data): self
     {
         $this->_data = $data;
 
@@ -241,9 +241,9 @@ class Document extends AbstractUpdateAction
      *
      * @return $this
      */
-    public function setDocAsUpsert($value)
+    public function setDocAsUpsert(bool $value): self
     {
-        $this->_docAsUpsert = (bool) $value;
+        $this->_docAsUpsert = $value;
 
         return $this;
     }
@@ -251,7 +251,7 @@ class Document extends AbstractUpdateAction
     /**
      * @return bool
      */
-    public function getDocAsUpsert()
+    public function getDocAsUpsert(): bool
     {
         return $this->_docAsUpsert;
     }
@@ -261,9 +261,9 @@ class Document extends AbstractUpdateAction
      *
      * @return $this
      */
-    public function setAutoPopulate($autoPopulate = true)
+    public function setAutoPopulate(bool $autoPopulate = true): self
     {
-        $this->_autoPopulate = (bool) $autoPopulate;
+        $this->_autoPopulate = $autoPopulate;
 
         return $this;
     }
@@ -271,7 +271,7 @@ class Document extends AbstractUpdateAction
     /**
      * @return bool
      */
-    public function isAutoPopulate()
+    public function isAutoPopulate(): bool
     {
         return $this->_autoPopulate;
     }
@@ -283,7 +283,7 @@ class Document extends AbstractUpdateAction
      *
      * @return $this
      */
-    public function setPipeline($pipeline)
+    public function setPipeline(string $pipeline): self
     {
         return $this->setParam('_pipeline', $pipeline);
     }
@@ -291,7 +291,7 @@ class Document extends AbstractUpdateAction
     /**
      * @return string
      */
-    public function getPipeline()
+    public function getPipeline(): string
     {
         return $this->getParam('_pipeline');
     }
@@ -299,15 +299,13 @@ class Document extends AbstractUpdateAction
     /**
      * @return bool
      */
-    public function hasPipeline()
+    public function hasPipeline(): bool
     {
         return $this->hasParam('_pipeline');
     }
 
     /**
-     * Returns the document as an array.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function toArray()
     {
@@ -318,13 +316,13 @@ class Document extends AbstractUpdateAction
     }
 
     /**
-     * @param array|\Elastica\Document $data
+     * @param array|Document $data
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
      * @return self
      */
-    public static function create($data)
+    public static function create($data): self
     {
         if ($data instanceof self) {
             return $data;

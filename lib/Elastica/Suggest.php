@@ -17,7 +17,7 @@ class Suggest extends Param
      */
     public function __construct(AbstractSuggest $suggestion = null)
     {
-        if (!is_null($suggestion)) {
+        if (null !== $suggestion) {
             $this->addSuggestion($suggestion);
         }
     }
@@ -29,7 +29,7 @@ class Suggest extends Param
      *
      * @return $this
      */
-    public function setGlobalText($text)
+    public function setGlobalText(string $text): self
     {
         return $this->setParam('text', $text);
     }
@@ -41,26 +41,28 @@ class Suggest extends Param
      *
      * @return $this
      */
-    public function addSuggestion(AbstractSuggest $suggestion)
+    public function addSuggestion(AbstractSuggest $suggestion): self
     {
         return $this->addParam('suggestion', $suggestion);
     }
 
     /**
-     * @param Suggest|AbstractSuggest $suggestion
+     * @param self|AbstractSuggest $suggestion
      *
      * @throws Exception\NotImplementedException
      *
      * @return self
      */
-    public static function create($suggestion)
+    public static function create($suggestion): self
     {
         switch (true) {
             case $suggestion instanceof self:
                 return $suggestion;
+
             case $suggestion instanceof AbstractSuggest:
                 return new self($suggestion);
         }
+
         throw new NotImplementedException();
     }
 

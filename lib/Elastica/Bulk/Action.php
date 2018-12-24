@@ -183,9 +183,9 @@ class Action
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         $data[] = $this->getActionMetadata();
         if ($this->hasSource()) {

@@ -38,11 +38,9 @@ class Filter extends AbstractAggregation
     }
 
     /**
-     * @throws \Elastica\Exception\InvalidException If filter is not set
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         if (!$this->hasParam('filter')) {
             throw new InvalidException('Filter is required');

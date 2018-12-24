@@ -35,7 +35,7 @@ class Snapshot
      *
      * @return Response
      */
-    public function registerRepository($name, $type, $settings = [])
+    public function registerRepository(string $name, string $type, array $settings = []): Response
     {
         $data = [
             'type' => $type,
@@ -50,21 +50,22 @@ class Snapshot
      *
      * @param string $name the name of the desired repository
      *
-     * @throws Exception\ResponseException
-     * @throws Exception\NotFoundException
+     * @throws ResponseException
+     * @throws NotFoundException
      *
      * @return array
      */
-    public function getRepository($name)
+    public function getRepository(string $name): array
     {
         try {
             $response = $this->request($name);
         } catch (ResponseException $e) {
-            if (404 == $e->getResponse()->getStatus()) {
+            if (404 === $e->getResponse()->getStatus()) {
                 throw new NotFoundException("Repository '".$name."' does not exist.");
             }
             throw $e;
         }
+
         $data = $response->getData();
 
         return $data[$name];
@@ -75,7 +76,7 @@ class Snapshot
      *
      * @return array
      */
-    public function getAllRepositories()
+    public function getAllRepositories(): array
     {
         return $this->request('_all')->getData();
     }
@@ -90,8 +91,12 @@ class Snapshot
      *
      * @return Response
      */
-    public function createSnapshot($repository, $name, $options = [], $waitForCompletion = false)
-    {
+    public function createSnapshot(
+        string $repository,
+        string $name,
+        array $options = [],
+        bool $waitForCompletion = false
+    ): Response {
         return $this->request($repository.'/'.$name, Request::PUT, $options, ['wait_for_completion' => $waitForCompletion]);
     }
 
@@ -101,21 +106,22 @@ class Snapshot
      * @param string $repository the name of the repository from which to retrieve the snapshot
      * @param string $name       the name of the desired snapshot
      *
-     * @throws Exception\ResponseException
-     * @throws Exception\NotFoundException
+     * @throws ResponseException
+     * @throws NotFoundException
      *
      * @return array
      */
-    public function getSnapshot($repository, $name)
+    public function getSnapshot(string $repository, string $name): array
     {
         try {
             $response = $this->request($repository.'/'.$name);
         } catch (ResponseException $e) {
-            if (404 == $e->getResponse()->getStatus()) {
+            if (404 === $e->getResponse()->getStatus()) {
                 throw new NotFoundException("Snapshot '".$name."' does not exist in repository '".$repository."'.");
             }
             throw $e;
         }
+
         $data = $response->getData();
 
         return $data['snapshots'][0];
@@ -128,7 +134,7 @@ class Snapshot
      *
      * @return array
      */
-    public function getAllSnapshots($repository)
+    public function getAllSnapshots(string $repository): array
     {
         return $this->request($repository.'/_all')->getData();
     }
@@ -141,7 +147,7 @@ class Snapshot
      *
      * @return Response
      */
-    public function deleteSnapshot($repository, $name)
+    public function deleteSnapshot(string $repository, string $name): Response
     {
         return $this->request($repository.'/'.$name, Request::DELETE);
     }
@@ -156,8 +162,12 @@ class Snapshot
      *
      * @return Response
      */
-    public function restoreSnapshot($repository, $name, $options = [], $waitForCompletion = false)
-    {
+    public function restoreSnapshot(
+        string $repository,
+        string $name,
+        array $options = [],
+        bool $waitForCompletion = false
+    ): Response {
         $endpoint = new Restore();
         $endpoint->setRepository($repository);
         $endpoint->setSnapshot($name);
@@ -177,7 +187,7 @@ class Snapshot
      *
      * @return Response
      */
-    public function request($path, $method = Request::GET, $data = [], array $query = [])
+    public function request(string $path, string $method = Request::GET, array $data = [], array $query = []): Response
     {
         return $this->_client->request('_snapshot/'.$path, $method, $data, $query);
     }

@@ -39,13 +39,9 @@ class Result
      *
      * @return mixed Result data
      */
-    public function getParam($name)
+    public function getParam(string $name)
     {
-        if (isset($this->_hit[$name])) {
-            return $this->_hit[$name];
-        }
-
-        return [];
+        return $this->_hit[$name] ?? [];
     }
 
     /**
@@ -55,7 +51,7 @@ class Result
      *
      * @return bool True if the param is set, false otherwise
      */
-    public function hasParam($name)
+    public function hasParam(string $name): bool
     {
         return isset($this->_hit[$name]);
     }
@@ -63,7 +59,7 @@ class Result
     /**
      * Returns the hit id.
      *
-     * @return string Hit id
+     * @return string|int Hit id
      */
     public function getId()
     {
@@ -75,7 +71,7 @@ class Result
      *
      * @return string Result type
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->getParam('_type');
     }
@@ -85,7 +81,7 @@ class Result
      *
      * @return array Fields list
      */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->getParam('fields');
     }
@@ -95,7 +91,7 @@ class Result
      *
      * @return bool
      */
-    public function hasFields()
+    public function hasFields(): bool
     {
         return $this->hasParam('fields');
     }
@@ -105,7 +101,7 @@ class Result
      *
      * @return string Index name
      */
-    public function getIndex()
+    public function getIndex(): string
     {
         return $this->getParam('_index');
     }
@@ -115,7 +111,7 @@ class Result
      *
      * @return float Result score
      */
-    public function getScore()
+    public function getScore(): float
     {
         return $this->getParam('_score');
     }
@@ -125,7 +121,7 @@ class Result
      *
      * @return array Hit array
      */
-    public function getHit()
+    public function getHit(): array
     {
         return $this->_hit;
     }
@@ -145,7 +141,7 @@ class Result
      *
      * @return array Fields list
      */
-    public function getInnerHits()
+    public function getInnerHits(): array
     {
         return $this->getParam('inner_hits');
     }
@@ -155,7 +151,7 @@ class Result
      *
      * @return bool
      */
-    public function hasInnerHits()
+    public function hasInnerHits(): bool
     {
         return $this->hasParam('inner_hits');
     }
@@ -167,7 +163,7 @@ class Result
      *
      * @return array Result data array
      */
-    public function getData()
+    public function getData(): array
     {
         if (isset($this->_hit['fields'])) {
             return isset($this->_hit['_source'])
@@ -183,7 +179,7 @@ class Result
      *
      * @return array Source data array
      */
-    public function getSource()
+    public function getSource(): array
     {
         return $this->getParam('_source');
     }
@@ -193,7 +189,7 @@ class Result
      *
      * @return array Result data array
      */
-    public function getHighlights()
+    public function getHighlights(): array
     {
         return $this->getParam('highlight');
     }
@@ -203,7 +199,7 @@ class Result
      *
      * @return array explanations
      */
-    public function getExplanation()
+    public function getExplanation(): array
     {
         return $this->getParam('_explanation');
     }
@@ -213,7 +209,7 @@ class Result
      *
      * @return Document
      */
-    public function getDocument()
+    public function getDocument(): Document
     {
         $doc = new Document();
         $doc->setData($this->getSource());
@@ -233,7 +229,7 @@ class Result
      * @param string $param
      * @param mixed  $value
      */
-    public function setParam($param, $value)
+    public function setParam(string $param, $value)
     {
         $this->_hit[$param] = $value;
     }
@@ -247,24 +243,24 @@ class Result
      *
      * @return mixed Key value
      */
-    public function __get($key)
+    public function __get(string $key)
     {
         $source = $this->getData();
 
-        return array_key_exists($key, $source) ? $source[$key] : null;
+        return $source[$key] ?? null;
     }
 
     /**
      * Magic function to support isset() calls.
      *
-     * @param string $key Key name
+     * @param mixed $key Key name
      *
      * @return bool
      */
-    public function __isset($key)
+    public function __isset($key): bool
     {
         $source = $this->getData();
 
-        return array_key_exists($key, $source) && null !== $source[$key];
+        return isset($source[$key]);
     }
 }

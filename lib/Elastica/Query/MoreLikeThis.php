@@ -172,7 +172,7 @@ class MoreLikeThis extends AbstractQuery
     /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         $array = parent::toArray();
 

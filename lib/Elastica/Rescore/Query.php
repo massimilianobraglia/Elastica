@@ -25,10 +25,7 @@ class Query extends AbstractRescore
     }
 
     /**
-     * Override default implementation so params are in the format
-     * expected by elasticsearch.
-     *
-     * @return array Rescore array
+     * {@inheritdoc}
      */
     public function toArray()
     {

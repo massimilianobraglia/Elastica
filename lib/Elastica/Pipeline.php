@@ -57,9 +57,9 @@ class Pipeline extends Param
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/put-pipeline-api.html
      */
-    public function create()
+    public function create(): Response
     {
-        if (empty($this->id)) {
+        if (null === $this->id) {
             throw new InvalidException('You should set a valid pipeline id');
         }
 
@@ -87,7 +87,7 @@ class Pipeline extends Param
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/get-pipeline-api.html
      */
-    public function getPipeline(string $id)
+    public function getPipeline(string $id): Response
     {
         $endpoint = new Get();
         $endpoint->setID($id);
@@ -104,7 +104,7 @@ class Pipeline extends Param
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-pipeline-api.html
      */
-    public function deletePipeline(string $id)
+    public function deletePipeline(string $id): Response
     {
         $endpoint = new Delete();
         $endpoint->setID($id);
@@ -127,7 +127,7 @@ class Pipeline extends Param
      *
      * @return $this
      */
-    public function setRawProcessors(array $processors)
+    public function setRawProcessors(array $processors): self
     {
         $this->_processors = $processors;
 
@@ -141,7 +141,7 @@ class Pipeline extends Param
      *
      * @return $this
      */
-    public function addProcessor(AbstractProcessor $processor)
+    public function addProcessor(AbstractProcessor $processor): self
     {
         if (empty($this->_processors)) {
             $this->_processors['processors'] = $processor->toArray();
@@ -156,9 +156,9 @@ class Pipeline extends Param
     /**
      * Set pipeline id.
      *
-     * @param string $id
+     * @param string|int $id
      */
-    public function setId(string $id)
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -170,7 +170,7 @@ class Pipeline extends Param
      *
      * @return $this
      */
-    public function setProcessors(array $processors)
+    public function setProcessors(array $processors): self
     {
         return $this->setParam('processors', [$processors]);
     }
@@ -182,17 +182,13 @@ class Pipeline extends Param
      *
      * @return $this
      */
-    public function setDescription(string $description)
+    public function setDescription(string $description): self
     {
         return $this->setParam('description', $description);
     }
 
     /**
-     * Converts the params to an array. A default implementation exist to create
-     * the an array out of the class name (last part of the class name)
-     * and the params.
-     *
-     * @return array Filter array
+     * {@inheritdoc}
      */
     public function toArray()
     {
@@ -202,11 +198,11 @@ class Pipeline extends Param
     }
 
     /**
-     * Returns index client.
+     * Returns client.
      *
-     * @return \Elastica\Client Index client object
+     * @return Client Client object
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->_client;
     }
@@ -218,7 +214,7 @@ class Pipeline extends Param
      *
      * @return Response
      */
-    public function requestEndpoint(AbstractEndpoint $endpoint)
+    public function requestEndpoint(AbstractEndpoint $endpoint): Response
     {
         $cloned = clone $endpoint;
 

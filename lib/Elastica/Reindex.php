@@ -3,6 +3,7 @@
 namespace Elastica;
 
 use Elastica\Query\AbstractQuery;
+use Elasticsearch\Endpoints\Reindex as ESReindex;
 
 class Reindex
 {
@@ -39,11 +40,11 @@ class Reindex
         $this->_options = $options;
     }
 
-    public function run()
+    public function run(): Index
     {
         $body = $this->_getBody($this->_oldIndex, $this->_newIndex, $this->_options);
 
-        $reindexEndpoint = new \Elasticsearch\Endpoints\Reindex();
+        $reindexEndpoint = new ESReindex();
         $reindexEndpoint->setBody($body);
 
         $this->_oldIndex->getClient()->requestEndpoint($reindexEndpoint);
@@ -52,7 +53,7 @@ class Reindex
         return $this->_newIndex;
     }
 
-    protected function _getBody($oldIndex, $newIndex, $options)
+    protected function _getBody(Index $oldIndex, Index $newIndex, array $options): array
     {
         $body = array_merge([
             'source' => $this->_getSourcePartBody($oldIndex, $options),
@@ -62,7 +63,7 @@ class Reindex
         return $body;
     }
 
-    protected function _getSourcePartBody(Index $index, array $options)
+    protected function _getSourcePartBody(Index $index, array $options): array
     {
         $sourceBody = array_merge([
             'index' => $index->getName(),
@@ -74,14 +75,14 @@ class Reindex
         return $sourceBody;
     }
 
-    protected function _getDestPartBody(Index $index, array $options)
+    protected function _getDestPartBody(Index $index, array $options): array
     {
         return array_merge([
             'index' => $index->getName(),
         ], $this->_resolveDestOptions($options));
     }
 
-    private function _resolveSourceOptions(array $options)
+    private function _resolveSourceOptions(array $options): array
     {
         return array_intersect_key($options, [
             self::TYPE => null,
@@ -89,7 +90,7 @@ class Reindex
         ]);
     }
 
-    private function _resolveDestOptions(array $options)
+    private function _resolveDestOptions(array $options): array
     {
         return array_intersect_key($options, [
             self::VERSION_TYPE => null,
@@ -97,7 +98,7 @@ class Reindex
         ]);
     }
 
-    private function _resolveBodyOptions(array $options)
+    private function _resolveBodyOptions(array $options): array
     {
         return array_intersect_key($options, [
             self::SIZE => null,
@@ -110,7 +111,7 @@ class Reindex
      *
      * @return array
      */
-    private function _setSourceQuery(array $sourceBody)
+    private function _setSourceQuery(array $sourceBody): array
     {
         if (isset($sourceBody[self::QUERY]) && $sourceBody[self::QUERY] instanceof AbstractQuery) {
             $sourceBody[self::QUERY] = $sourceBody[self::QUERY]->toArray();
@@ -124,7 +125,7 @@ class Reindex
      *
      * @return array
      */
-    private function _setSourceType(array $sourceBody)
+    private function _setSourceType(array $sourceBody): array
     {
         if (isset($sourceBody[self::TYPE]) && !is_array($sourceBody[self::TYPE])) {
             $sourceBody[self::TYPE] = [$sourceBody[self::TYPE]];

@@ -58,7 +58,7 @@ class ScriptFields extends Param
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function toArray()
     {

@@ -13,7 +13,7 @@ interface ArrayableInterface
     /**
      * Converts the object to an array.
      *
-     * @return array Object as array
+     * @return array|object Object as array
      */
     public function toArray();
 }

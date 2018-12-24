@@ -182,8 +182,6 @@ class QueryTest extends BaseTest
     {
         $query = new Query();
 
-        $params = ['query' => 'test'];
-
         $query->setStoredFields(['firstname', 'lastname']);
 
         $data = $query->toArray();

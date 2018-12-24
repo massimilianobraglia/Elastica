@@ -79,7 +79,7 @@ class JSON
      * @see http://php.net/manual/en/function.json-last-error-msg.php
      * @see https://github.com/php/php-src/blob/master/ext/json/json.c#L308
      *
-     * @return string
+     * @return string|bool
      */
     private static function getJsonLastErrorMsg()
     {

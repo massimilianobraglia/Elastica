@@ -25,10 +25,10 @@ class Util
      *
      * @return bool
      */
-    public static function isDateMathEscaped($requestUri)
+    public static function isDateMathEscaped(string $requestUri): bool
     {
         // In practice, the only symbol that really needs to be escaped in URI is '/' => '%2F'
-        return false !== strpos(strtoupper($requestUri), '%2F');
+        return false !== stripos($requestUri, '%2F');
     }
 
     /**
@@ -40,7 +40,7 @@ class Util
      *
      * @return string
      */
-    public static function escapeDateMath($requestUri)
+    public static function escapeDateMath(string $requestUri): string
     {
         if (empty($requestUri)) {
             return $requestUri;
@@ -84,7 +84,7 @@ class Util
      *
      * @return string Replaced and escaped query term
      */
-    public static function replaceBooleanWordsAndEscapeTerm($term)
+    public static function replaceBooleanWordsAndEscapeTerm(string $term): string
     {
         $result = $term;
         $result = self::replaceBooleanWords($result);
@@ -103,7 +103,7 @@ class Util
      *
      * @return string Escaped query term
      */
-    public static function escapeTerm($term)
+    public static function escapeTerm(string $term): string
     {
         $result = $term;
         // \ escaping has to be first, otherwise escaped later once again
@@ -134,7 +134,7 @@ class Util
      *
      * @return string Replaced query term
      */
-    public static function replaceBooleanWords($term)
+    public static function replaceBooleanWords(string $term): string
     {
         $replacementMap = [' AND ' => ' && ', ' OR ' => ' || ', ' NOT ' => ' !'];
         $result = strtr($term, $replacementMap);
@@ -151,7 +151,7 @@ class Util
      *
      * @return string CamelCase string
      */
-    public static function toCamelCase($string)
+    public static function toCamelCase(string $string): string
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $string)));
     }
@@ -165,7 +165,7 @@ class Util
      *
      * @return string SnakeCase string
      */
-    public static function toSnakeCase($string)
+    public static function toSnakeCase(string $string): string
     {
         $string = preg_replace('/([A-Z])/', '_$1', $string);
 
@@ -181,16 +181,15 @@ class Util
      *
      * @return string Converted date string
      */
-    public static function convertDate($date)
+    public static function convertDate($date): string
     {
         if (is_int($date)) {
             $timestamp = $date;
         } else {
             $timestamp = strtotime($date);
         }
-        $string = date('Y-m-d\TH:i:s\Z', $timestamp);
 
-        return $string;
+        return  date('Y-m-d\TH:i:s\Z', $timestamp);
     }
 
     /**
@@ -198,17 +197,16 @@ class Util
      *
      * Converts it to the lucene format, including the appropriate TimeZone
      *
-     * @param \DateTime $dateTime
-     * @param bool      $includeTimezone
+     * @param \DateTimeInterface $dateTime
+     * @param bool               $includeTimezone
      *
      * @return string
      */
-    public static function convertDateTimeObject(\DateTime $dateTime, $includeTimezone = true)
+    public static function convertDateTimeObject(\DateTimeInterface $dateTime, bool $includeTimezone = true): string
     {
-        $formatString = 'Y-m-d\TH:i:s'.(true === $includeTimezone ? 'P' : '\Z');
-        $string = $dateTime->format($formatString);
+        $formatString = 'Y-m-d\TH:i:s'.($includeTimezone ? 'P' : '\Z');
 
-        return $string;
+        return $dateTime->format($formatString);
     }
 
     /**
@@ -219,7 +217,7 @@ class Util
      *
      * @return string parameter name
      */
-    public static function getParamName($class)
+    public static function getParamName($class): string
     {
         if (is_object($class)) {
             $class = get_class($class);
@@ -239,7 +237,7 @@ class Util
      *
      * @return string
      */
-    public static function convertRequestToCurlCommand(Request $request)
+    public static function convertRequestToCurlCommand(Request $request): string
     {
         $message = 'curl -X'.strtoupper($request->getMethod()).' ';
         $message .= '\'http://'.$request->getConnection()->getHost().':'.$request->getConnection()->getPort().'/';

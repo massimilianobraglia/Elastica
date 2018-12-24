@@ -2,6 +2,10 @@
 
 namespace Elastica;
 
+use Elastica\Exception\InvalidException;
+use Elasticsearch\Endpoints\Tasks\Cancel;
+use Elasticsearch\Endpoints\Tasks\Get;
+
 /**
  * Represents elasticsearch task.
  *
@@ -23,7 +27,7 @@ class Task extends Param
     /**
      * Contains all status infos.
      *
-     * @var \Elastica\Response Response object
+     * @var Response Response object
      */
     protected $_response;
 
@@ -37,7 +41,7 @@ class Task extends Param
     /**
      * Client object.
      *
-     * @var \Elastica\Client Client object
+     * @var Client Client object
      */
     protected $_client;
 
@@ -50,7 +54,7 @@ class Task extends Param
     /**
      * Returns task id.
      *
-     * @return string
+     * @return string|int
      */
     public function getId()
     {
@@ -64,7 +68,7 @@ class Task extends Param
      */
     public function getData(): array
     {
-        if (is_null($this->_data)) {
+        if (null === $this->_data) {
             $this->refresh();
         }
 
@@ -78,7 +82,7 @@ class Task extends Param
      */
     public function getResponse(): Response
     {
-        if (is_null($this->_response)) {
+        if (null === $this->_response) {
             $this->refresh();
         }
 
@@ -92,7 +96,7 @@ class Task extends Param
      */
     public function refresh(array $options = [])
     {
-        $endpoint = new \Elasticsearch\Endpoints\Tasks\Get();
+        $endpoint = new Get();
         $endpoint->setTaskId($this->_id);
         $endpoint->setParams($options);
 
@@ -113,10 +117,10 @@ class Task extends Param
     public function cancel(): Response
     {
         if (empty($this->_id)) {
-            throw new \Exception('No task id given');
+            throw new InvalidException('No task id given');
         }
 
-        $endpoint = new \Elasticsearch\Endpoints\Tasks\Cancel();
+        $endpoint = new Cancel();
         $endpoint->setTaskId($this->_id);
 
         return $this->_client->requestEndpoint($endpoint);

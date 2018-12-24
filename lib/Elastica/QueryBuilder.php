@@ -41,14 +41,14 @@ class QueryBuilder
     /**
      * Returns Facade for custom DSL object.
      *
-     * @param $dsl
-     * @param array $arguments
+     * @param string $dsl
+     * @param array  $arguments
      *
      * @throws QueryBuilderException
      *
      * @return Facade
      */
-    public function __call($dsl, array $arguments)
+    public function __call(string $dsl, array $arguments)
     {
         if (false === isset($this->_facades[$dsl])) {
             throw new QueryBuilderException('DSL "'.$dsl.'" not supported');
@@ -67,14 +67,10 @@ class QueryBuilder
         $this->_facades[$dsl->getType()] = new Facade($dsl, $this->_version);
     }
 
-    /*
-     * convenience methods
-     */
-
     /**
      * Query DSL.
      *
-     * @return DSL\Query
+     * @return DSL\Query|Facade
      */
     public function query()
     {
@@ -84,7 +80,7 @@ class QueryBuilder
     /**
      * Aggregation DSL.
      *
-     * @return DSL\Aggregation
+     * @return DSL\Aggregation|Facade
      */
     public function aggregation()
     {
@@ -94,7 +90,7 @@ class QueryBuilder
     /**
      * Suggest DSL.
      *
-     * @return DSL\Suggest
+     * @return DSL\Suggest|Facade
      */
     public function suggest()
     {

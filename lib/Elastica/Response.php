@@ -45,7 +45,7 @@ class Response
     /**
      * HTTP response status code.
      *
-     * @var int
+     * @var int|null
      */
     protected $_status;
 
@@ -59,16 +59,17 @@ class Response
     /**
      * Construct.
      *
-     * @param string|array $responseString Response string (json)
-     * @param int          $responseStatus http status code
+     * @param string|array $response       Response string (json)
+     * @param int|null     $responseStatus http status code
      */
-    public function __construct($responseString, $responseStatus = null)
+    public function __construct($response, int $responseStatus = null)
     {
-        if (is_array($responseString)) {
-            $this->_response = $responseString;
+        if (is_array($response)) {
+            $this->_response = $response;
         } else {
-            $this->_responseString = $responseString;
+            $this->_responseString = $response;
         }
+
         $this->_status = $responseStatus;
     }
 
@@ -77,7 +78,7 @@ class Response
      *
      * @return string Error message
      */
-    public function getError()
+    public function getError(): string
     {
         $error = $this->getFullError();
 
@@ -117,15 +118,13 @@ class Response
     {
         $response = $this->getData();
 
-        if (isset($response['error'])) {
-            return $response['error'];
-        }
+        return $response['error'] ?? null;
     }
 
     /**
      * @return string Error string based on the error object
      */
-    public function getErrorMessage()
+    public function getErrorMessage(): string
     {
         return $this->getError();
     }
@@ -135,7 +134,7 @@ class Response
      *
      * @return bool True if response has error
      */
-    public function hasError()
+    public function hasError(): bool
     {
         $response = $this->getData();
 
@@ -147,7 +146,7 @@ class Response
      *
      * @return bool True if response has failed shards
      */
-    public function hasFailedShards()
+    public function hasFailedShards(): bool
     {
         try {
             $shardsStatistics = $this->getShardsStatistics();
@@ -163,7 +162,7 @@ class Response
      *
      * @return bool True if ok
      */
-    public function isOk()
+    public function isOk(): bool
     {
         $data = $this->getData();
 
@@ -199,7 +198,7 @@ class Response
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getStatus()
     {
@@ -211,9 +210,9 @@ class Response
      *
      * @return array Response data array
      */
-    public function getData()
+    public function getData(): array
     {
-        if (null == $this->_response) {
+        if (null === $this->_response) {
             $response = $this->_responseString;
 
             try {
@@ -246,20 +245,20 @@ class Response
      *
      * @return array information about the curl request
      */
-    public function getTransferInfo()
+    public function getTransferInfo(): array
     {
         return $this->_transferInfo;
     }
 
     /**
      * Sets the transfer info of the curl request. This function is called
-     * from the \Elastica\Client::_callService .
+     * from the Client::_callService.
      *
      * @param array $transferInfo the curl transfer information
      *
      * @return $this
      */
-    public function setTransferInfo(array $transferInfo)
+    public function setTransferInfo(array $transferInfo): self
     {
         $this->_transferInfo = $transferInfo;
 
@@ -271,7 +270,7 @@ class Response
      *
      * @return float Query time
      */
-    public function getQueryTime()
+    public function getQueryTime(): float
     {
         return $this->_queryTime;
     }
@@ -283,7 +282,7 @@ class Response
      *
      * @return $this
      */
-    public function setQueryTime($queryTime)
+    public function setQueryTime(float $queryTime): self
     {
         $this->_queryTime = $queryTime;
 
@@ -293,11 +292,11 @@ class Response
     /**
      * Time request took.
      *
-     * @throws \Elastica\Exception\NotFoundException
+     * @throws NotFoundException
      *
      * @return int Time request took
      */
-    public function getEngineTime()
+    public function getEngineTime(): int
     {
         $data = $this->getData();
 
@@ -311,11 +310,11 @@ class Response
     /**
      * Get the _shard statistics for the response.
      *
-     * @throws \Elastica\Exception\NotFoundException
+     * @throws NotFoundException
      *
      * @return array
      */
-    public function getShardsStatistics()
+    public function getShardsStatistics(): array
     {
         $data = $this->getData();
 
@@ -329,11 +328,11 @@ class Response
     /**
      * Get the _scroll value for the response.
      *
-     * @throws \Elastica\Exception\NotFoundException
+     * @throws NotFoundException
      *
      * @return string
      */
-    public function getScrollId()
+    public function getScrollId(): string
     {
         $data = $this->getData();
 
@@ -349,7 +348,7 @@ class Response
      *
      * @param bool $jsonBigintConversion
      */
-    public function setJsonBigintConversion($jsonBigintConversion)
+    public function setJsonBigintConversion(bool $jsonBigintConversion)
     {
         $this->_jsonBigintConversion = $jsonBigintConversion;
     }
@@ -359,7 +358,7 @@ class Response
      *
      * @return bool
      */
-    public function getJsonBigintConversion()
+    public function getJsonBigintConversion(): bool
     {
         return $this->_jsonBigintConversion;
     }

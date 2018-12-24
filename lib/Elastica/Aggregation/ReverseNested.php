@@ -37,7 +37,7 @@ class ReverseNested extends AbstractAggregation
     /**
      * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         $array = parent::toArray();
 

@@ -18,7 +18,7 @@ abstract class AbstractRescore extends Param
      *
      * @return string name
      */
-    protected function _getBaseName()
+    protected function _getBaseName(): string
     {
         return 'rescore';
     }

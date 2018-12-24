@@ -27,13 +27,11 @@ abstract class AbstractAggregation extends Param implements NameableInterface
     }
 
     /**
-     * Set the name of this aggregation.
-     *
-     * @param string $name
+     * {@inheritdoc}
      *
      * @return $this
      */
-    public function setName($name): NameableInterface
+    public function setName(string $name): NameableInterface
     {
         $this->_name = $name;
 
@@ -81,9 +79,9 @@ abstract class AbstractAggregation extends Param implements NameableInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         $array = parent::toArray();
 

@@ -13,9 +13,9 @@ use Elastica\Script\ScriptFields;
 class TopHits extends AbstractAggregation
 {
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         $array = parent::toArray();
 

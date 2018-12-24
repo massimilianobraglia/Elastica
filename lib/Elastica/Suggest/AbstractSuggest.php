@@ -106,31 +106,25 @@ abstract class AbstractSuggest extends Param implements NameableInterface
     }
 
     /**
-     * Sets the name of the suggest. It is automatically set by
-     * the constructor.
-     *
-     * @param string $name The name of the suggest
-     *
-     * @throws \Elastica\Exception\InvalidException If name is empty
+     * {@inheritdoc}
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): NameableInterface
     {
         if (empty($name)) {
             throw new InvalidException('Suggest name has to be set');
         }
+
         $this->_name = $name;
 
         return $this;
     }
 
     /**
-     * Retrieve the name of this suggestion.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_name;
     }

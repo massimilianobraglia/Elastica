@@ -78,15 +78,15 @@ class BucketScript extends AbstractAggregation
     }
 
     /**
-     * @throws InvalidException If buckets path or script is not set
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         if (!$this->hasParam('buckets_path')) {
             throw new InvalidException('Buckets path is required');
-        } elseif (!$this->hasParam('script')) {
+        }
+
+        if (!$this->hasParam('script')) {
             throw new InvalidException('Script parameter is required');
         }
 

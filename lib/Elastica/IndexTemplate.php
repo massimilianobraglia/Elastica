@@ -2,8 +2,6 @@
 
 namespace Elastica;
 
-use Elastica\Exception\InvalidException;
-
 /**
  * Elastica index template object.
  *
@@ -23,38 +21,30 @@ class IndexTemplate
     /**
      * Client object.
      *
-     * @var \Elastica\Client Client object
+     * @var Client Client object
      */
     protected $_client;
 
     /**
      * Creates a new index template object.
      *
-     * @param \Elastica\Client $client Client object
-     * @param string           $name   Index template name
-     *
-     * @throws \Elastica\Exception\InvalidException
+     * @param Client $client Client object
+     * @param string $name   Index template name
      */
-    public function __construct(Client $client, $name)
+    public function __construct(Client $client, string $name)
     {
         $this->_client = $client;
-
-        if (!is_scalar($name)) {
-            throw new InvalidException('Index template should be a scalar type');
-        }
-        $this->_name = (string) $name;
+        $this->_name = $name;
     }
 
     /**
      * Deletes the index template.
      *
-     * @return \Elastica\Response Response object
+     * @return Response Response object
      */
-    public function delete()
+    public function delete(): Response
     {
-        $response = $this->request(Request::DELETE);
-
-        return $response;
+        return $this->request(Request::DELETE);
     }
 
     /**
@@ -64,9 +54,9 @@ class IndexTemplate
      *
      * @param array $args OPTIONAL Arguments to use
      *
-     * @return \Elastica\Response
+     * @return Response
      */
-    public function create(array $args = [])
+    public function create(array $args = []): Response
     {
         return $this->request(Request::PUT, $args);
     }
@@ -76,7 +66,7 @@ class IndexTemplate
      *
      * @return bool True if index exists
      */
-    public function exists()
+    public function exists(): bool
     {
         $response = $this->request(Request::HEAD);
 
@@ -88,7 +78,7 @@ class IndexTemplate
      *
      * @return string Index name
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_name;
     }
@@ -96,9 +86,9 @@ class IndexTemplate
     /**
      * Returns index template client.
      *
-     * @return \Elastica\Client Index client object
+     * @return Client Index client object
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->_client;
     }
@@ -111,7 +101,7 @@ class IndexTemplate
      *
      * @return \Elastica\Response Response object
      */
-    public function request($method, $data = [])
+    public function request(string $method, array $data = []): Response
     {
         $path = '_template/'.$this->getName();
 

@@ -22,18 +22,16 @@ class NullTransport extends AbstractTransport
      *
      * @var Response Response
      */
-    protected $_response = null;
+    protected $_response;
 
     /**
      * Set response object the transport returns.
      *
-     * @param \Elastica\Response $response
-     *
-     * @return $this
+     * @return Response $response
      */
     public function getResponse()
     {
-        return $this->_response;
+        return $this->_response ?? $this->generateDefaultResponse([]);
     }
 
     /**
@@ -47,7 +45,7 @@ class NullTransport extends AbstractTransport
     {
         $this->_response = $response;
 
-        return $this->_response;
+        return $this;
     }
 
     /**
@@ -88,12 +86,6 @@ class NullTransport extends AbstractTransport
      */
     public function exec(Request $request, array $params)
     {
-        $response = $this->getResponse();
-
-        if (!$response) {
-            $response = $this->generateDefaultResponse($params);
-        }
-
-        return $response;
+        return $this->generateDefaultResponse($params);
     }
 }

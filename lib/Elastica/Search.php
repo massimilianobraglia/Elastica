@@ -3,6 +3,7 @@
 namespace Elastica;
 
 use Elastica\Exception\InvalidException;
+use Elastica\Query\AbstractQuery;
 use Elastica\ResultSet\BuilderInterface;
 use Elastica\ResultSet\DefaultBuilder;
 
@@ -13,9 +14,6 @@ use Elastica\ResultSet\DefaultBuilder;
  */
 class Search
 {
-    /*
-     * Options
-     */
     const OPTION_SEARCH_TYPE = 'search_type';
     const OPTION_ROUTING = 'routing';
     const OPTION_PREFERENCE = 'preference';
@@ -30,13 +28,28 @@ class Search
     const OPTION_SHARD_REQUEST_CACHE = 'request_cache';
     const OPTION_FILTER_PATH = 'filter_path';
 
-    /*
-     * Search types
-     */
     const OPTION_SEARCH_TYPE_DFS_QUERY_THEN_FETCH = 'dfs_query_then_fetch';
     const OPTION_SEARCH_TYPE_QUERY_THEN_FETCH = 'query_then_fetch';
     const OPTION_SEARCH_TYPE_SUGGEST = 'suggest';
     const OPTION_SEARCH_IGNORE_UNAVAILABLE = 'ignore_unavailable';
+
+    const VALID_OPTIONS = [
+        self::OPTION_SEARCH_TYPE,
+        self::OPTION_ROUTING,
+        self::OPTION_PREFERENCE,
+        self::OPTION_VERSION,
+        self::OPTION_TIMEOUT,
+        self::OPTION_FROM,
+        self::OPTION_SIZE,
+        self::OPTION_SCROLL,
+        self::OPTION_SCROLL_ID,
+        self::OPTION_QUERY_CACHE,
+        self::OPTION_TERMINATE_AFTER,
+        self::OPTION_SHARD_REQUEST_CACHE,
+        self::OPTION_FILTER_PATH,
+        self::OPTION_SEARCH_TYPE_SUGGEST,
+        self::OPTION_SEARCH_IGNORE_UNAVAILABLE,
+    ];
 
     /**
      * @var BuilderInterface
@@ -70,42 +83,42 @@ class Search
     /**
      * Client object.
      *
-     * @var \Elastica\Client
+     * @var Client
      */
     protected $_client;
 
     /**
      * Constructs search object.
      *
-     * @param \Elastica\Client $client  Client object
+     * @param Client           $client  Client object
      * @param BuilderInterface $builder
      */
     public function __construct(Client $client, BuilderInterface $builder = null)
     {
-        $this->_builder = $builder ?: new DefaultBuilder();
+        $this->_builder = $builder ?? new DefaultBuilder();
         $this->_client = $client;
     }
 
     /**
      * Adds a index to the list.
      *
-     * @param \Elastica\Index|string $index Index object or string
+     * @param Index|string $index Index object or string
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
      * @return $this
      */
-    public function addIndex($index)
+    public function addIndex($index): self
     {
         if ($index instanceof Index) {
             $index = $index->getName();
         }
 
-        if (!is_scalar($index)) {
+        if (!is_string($index)) {
             throw new InvalidException('Invalid param type');
         }
 
-        $this->_indices[] = (string) $index;
+        $this->_indices[] = $index;
 
         return $this;
     }
@@ -117,7 +130,7 @@ class Search
      *
      * @return $this
      */
-    public function addIndices(array $indices = [])
+    public function addIndices(array $indices = []): self
     {
         foreach ($indices as $index) {
             $this->addIndex($index);
@@ -129,13 +142,13 @@ class Search
     /**
      * Adds a type to the current search.
      *
-     * @param \Elastica\Type|string $type Type name or object
+     * @param Type|string $type Type name or object
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
      * @return $this
      */
-    public function addType($type)
+    public function addType($type): self
     {
         if ($type instanceof Type) {
             $type = $type->getName();
@@ -157,7 +170,7 @@ class Search
      *
      * @return $this
      */
-    public function addTypes(array $types = [])
+    public function addTypes(array $types = []): self
     {
         foreach ($types as $type) {
             $this->addType($type);
@@ -167,11 +180,11 @@ class Search
     }
 
     /**
-     * @param string|array|\Elastica\Query|\Elastica\Suggest|\Elastica\Query\AbstractQuery $query
+     * @param string|array|Query|Suggest|AbstractQuery $query
      *
      * @return $this
      */
-    public function setQuery($query)
+    public function setQuery($query): self
     {
         $this->_query = Query::create($query);
 
@@ -184,7 +197,7 @@ class Search
      *
      * @return $this
      */
-    public function setOption($key, $value)
+    public function setOption(string $key, $value): self
     {
         $this->_validateOption($key);
 
@@ -198,7 +211,7 @@ class Search
      *
      * @return $this
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): self
     {
         $this->clearOptions();
 
@@ -212,7 +225,7 @@ class Search
     /**
      * @return $this
      */
-    public function clearOptions()
+    public function clearOptions(): self
     {
         $this->_options = [];
 
@@ -225,7 +238,7 @@ class Search
      *
      * @return $this
      */
-    public function addOption($key, $value)
+    public function addOption(string $key, $value): self
     {
         $this->_validateOption($key);
 
@@ -239,7 +252,7 @@ class Search
      *
      * @return bool
      */
-    public function hasOption($key)
+    public function hasOption(string $key): bool
     {
         return isset($this->_options[$key]);
     }
@@ -247,7 +260,7 @@ class Search
     /**
      * @param string $key
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
      * @return mixed
      */
@@ -263,7 +276,7 @@ class Search
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->_options;
     }
@@ -271,40 +284,25 @@ class Search
     /**
      * @param string $key
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
      * @return bool
      */
-    protected function _validateOption($key)
+    protected function _validateOption(string $key): bool
     {
-        switch ($key) {
-            case self::OPTION_SEARCH_TYPE:
-            case self::OPTION_ROUTING:
-            case self::OPTION_PREFERENCE:
-            case self::OPTION_VERSION:
-            case self::OPTION_TIMEOUT:
-            case self::OPTION_FROM:
-            case self::OPTION_SIZE:
-            case self::OPTION_SCROLL:
-            case self::OPTION_SCROLL_ID:
-            case self::OPTION_SEARCH_TYPE_SUGGEST:
-            case self::OPTION_SEARCH_IGNORE_UNAVAILABLE:
-            case self::OPTION_QUERY_CACHE:
-            case self::OPTION_TERMINATE_AFTER:
-            case self::OPTION_SHARD_REQUEST_CACHE:
-            case self::OPTION_FILTER_PATH:
-                return true;
+        if (!\in_array($key, self::VALID_OPTIONS, true)) {
+            throw new InvalidException("Invalid option $key");
         }
 
-        throw new InvalidException('Invalid option '.$key);
+        return true;
     }
 
     /**
      * Return client object.
      *
-     * @return \Elastica\Client Client object
+     * @return Client Client object
      */
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->_client;
     }
@@ -312,9 +310,9 @@ class Search
     /**
      * Return array of indices.
      *
-     * @return array List of index names
+     * @return string[] List of index names
      */
-    public function getIndices()
+    public function getIndices(): array
     {
         return $this->_indices;
     }
@@ -322,7 +320,7 @@ class Search
     /**
      * @return bool
      */
-    public function hasIndices()
+    public function hasIndices(): bool
     {
         return count($this->_indices) > 0;
     }
@@ -332,21 +330,21 @@ class Search
      *
      * @return bool
      */
-    public function hasIndex($index)
+    public function hasIndex($index): bool
     {
         if ($index instanceof Index) {
             $index = $index->getName();
         }
 
-        return in_array($index, $this->_indices);
+        return in_array($index, $this->_indices, true);
     }
 
     /**
      * Return array of types.
      *
-     * @return array List of types
+     * @return string[] List of types
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->_types;
     }
@@ -354,29 +352,29 @@ class Search
     /**
      * @return bool
      */
-    public function hasTypes()
+    public function hasTypes(): bool
     {
         return count($this->_types) > 0;
     }
 
     /**
-     * @param \Elastica\Type|string $type
+     * @param Type|string $type
      *
      * @return bool
      */
-    public function hasType($type)
+    public function hasType($type): bool
     {
         if ($type instanceof Type) {
             $type = $type->getName();
         }
 
-        return in_array($type, $this->_types);
+        return in_array($type, $this->_types, true);
     }
 
     /**
-     * @return \Elastica\Query
+     * @return Query
      */
-    public function getQuery()
+    public function getQuery(): Query
     {
         if (null === $this->_query) {
             $this->_query = Query::create('');
@@ -388,11 +386,11 @@ class Search
     /**
      * Creates new search object.
      *
-     * @param \Elastica\SearchableInterface $searchObject
+     * @param SearchableInterface $searchObject
      *
      * @return Search
      */
-    public static function create(SearchableInterface $searchObject)
+    public static function create(SearchableInterface $searchObject): self
     {
         return $searchObject->createSearch();
     }
@@ -402,7 +400,7 @@ class Search
      *
      * @return string Search path
      */
-    public function getPath()
+    public function getPath(): string
     {
         if (isset($this->_options[self::OPTION_SCROLL_ID])) {
             return '_search/scroll';
@@ -435,11 +433,11 @@ class Search
      * @param mixed     $query
      * @param int|array $options OPTIONAL Limit or associative array of options (option=>value)
      *
-     * @throws \Elastica\Exception\InvalidException
+     * @throws InvalidException
      *
-     * @return \Elastica\ResultSet
+     * @return ResultSet
      */
-    public function search($query = '', $options = null)
+    public function search($query = '', $options = null): ResultSet
     {
         $this->setOptionsAndQuery($options, $query);
 
@@ -449,7 +447,7 @@ class Search
         $params = $this->getOptions();
 
         // Send scroll_id via raw HTTP body to handle cases of very large (> 4kb) ids.
-        if ('_search/scroll' == $path) {
+        if ('_search/scroll' === $path) {
             $data = [self::OPTION_SCROLL_ID => $params[self::OPTION_SCROLL_ID]];
             unset($params[self::OPTION_SCROLL_ID]);
         } else {
@@ -472,7 +470,7 @@ class Search
      *
      * @return int|ResultSet
      */
-    public function count($query = '', $fullResult = false)
+    public function count($query = '', bool $fullResult = false)
     {
         $this->setOptionsAndQuery(null, $query);
 
@@ -493,14 +491,14 @@ class Search
     }
 
     /**
-     * @param array|int                    $options
-     * @param string|array|\Elastica\Query $query
+     * @param array|int          $options
+     * @param string|array|Query $query
      *
      * @return $this
      */
-    public function setOptionsAndQuery($options = null, $query = '')
+    public function setOptionsAndQuery($options = null, $query = ''): self
     {
-        if ('' != $query) {
+        if ('' !== $query) {
             $this->setQuery($query);
         }
 
@@ -526,7 +524,7 @@ class Search
      *
      * @return $this
      */
-    public function setSuggest(Suggest $suggest)
+    public function setSuggest(Suggest $suggest): self
     {
         return $this->setOptionsAndQuery([self::OPTION_SEARCH_TYPE_SUGGEST => 'suggest'], $suggest);
     }
@@ -534,13 +532,11 @@ class Search
     /**
      * Returns the Scroll Iterator.
      *
-     * @see Elastica\Scroll
-     *
      * @param string $expiryTime
      *
      * @return Scroll
      */
-    public function scroll($expiryTime = '1m')
+    public function scroll(string $expiryTime = '1m'): Scroll
     {
         return new Scroll($this, $expiryTime);
     }
@@ -548,7 +544,7 @@ class Search
     /**
      * @return BuilderInterface
      */
-    public function getResultSetBuilder()
+    public function getResultSetBuilder(): BuilderInterface
     {
         return $this->_builder;
     }

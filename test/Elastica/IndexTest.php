@@ -3,6 +3,7 @@
 namespace Elastica\Test;
 
 use Elastica\Document;
+use Elastica\Exception\InvalidException;
 use Elastica\Exception\ResponseException;
 use Elastica\Index;
 use Elastica\Query\QueryString;
@@ -43,7 +44,7 @@ class IndexTest extends BaseTest
         $this->assertEquals($storedMapping['_doc']['properties']['username']['type'], 'text');
         $this->assertEquals($storedMapping['_doc']['properties']['test']['type'], 'integer');
 
-        $result = $type->search('hanswurst');
+        $type->search('hanswurst');
     }
 
     /**
@@ -83,7 +84,7 @@ class IndexTest extends BaseTest
      */
     public function testAddRemoveAlias()
     {
-        $this->expectException(\Elastica\Exception\ResponseException::class);
+        $this->expectException(ResponseException::class);
 
         $client = $this->_getClient();
 
@@ -620,7 +621,7 @@ class IndexTest extends BaseTest
      */
     public function testCreateWithInvalidOption()
     {
-        $this->expectException(\Elastica\Exception\InvalidException::class);
+        $this->expectException(InvalidException::class);
 
         $client = $this->_getClient();
         $indexName = 'test';
@@ -783,17 +784,6 @@ class IndexTest extends BaseTest
         $data = $index->analyze(['text' => 'foo', 'explain' => true], []);
 
         $this->assertArrayHasKey('custom_analyzer', $data);
-    }
-
-    /**
-     * @group unit
-     */
-    public function testThrowExceptionIfNotScalar()
-    {
-        $this->expectException(\Elastica\Exception\InvalidException::class);
-
-        $client = $this->_getClient();
-        $client->getIndex(new \stdClass());
     }
 
     /**

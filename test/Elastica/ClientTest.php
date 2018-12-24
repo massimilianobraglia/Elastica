@@ -9,7 +9,6 @@ use Elastica\Connection;
 use Elastica\Document;
 use Elastica\Exception\Connection\HttpException;
 use Elastica\Exception\ConnectionException;
-use Elastica\Exception\InvalidException;
 use Elastica\Exception\NotFoundException;
 use Elastica\Index;
 use Elastica\Request;
@@ -1220,67 +1219,6 @@ class ClientTest extends BaseTest
         $responseArray = $response->getData();
 
         $this->assertEquals(1, $responseArray['hits']['total']);
-    }
-
-    /**
-     * @group unit
-     */
-    public function testAddHeader()
-    {
-        $client = $this->_getClient();
-
-        // add one header
-        $client->addHeader('foo', 'bar');
-        $this->assertEquals(['foo' => 'bar'], $client->getConfigValue('headers'));
-
-        // check class
-        $this->assertInstanceOf(Client::class, $client->addHeader('foo', 'bar'));
-
-        // check invalid parameters
-        try {
-            $client->addHeader(new \stdClass(), 'foo');
-            $this->fail('Header name is not a string but exception not thrown');
-        } catch (InvalidException $ex) {
-        }
-
-        try {
-            $client->addHeader('foo', new \stdClass());
-            $this->fail('Header value is not a string but exception not thrown');
-        } catch (InvalidException $ex) {
-        }
-    }
-
-    /**
-     * @group unit
-     */
-    public function testRemoveHeader()
-    {
-        $client = $this->_getClient();
-
-        // set headers
-        $headers = [
-            'first' => 'first value',
-            'second' => 'second value',
-        ];
-        foreach ($headers as $key => $value) {
-            $client->addHeader($key, $value);
-        }
-        $this->assertEquals($headers, $client->getConfigValue('headers'));
-
-        // remove one
-        $client->removeHeader('first');
-        unset($headers['first']);
-        $this->assertEquals($headers, $client->getConfigValue('headers'));
-
-        // check class
-        $this->assertInstanceOf(Client::class, $client->removeHeader('second'));
-
-        // check invalid parameter
-        try {
-            $client->removeHeader(new \stdClass());
-            $this->fail('Header name is not a string but exception not thrown');
-        } catch (InvalidException $ex) {
-        }
     }
 
     /**

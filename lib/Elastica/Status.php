@@ -18,7 +18,7 @@ class Status
     /**
      * Contains all status infos.
      *
-     * @var \Elastica\Response Response object
+     * @var Response Response object
      */
     protected $_response;
 
@@ -32,14 +32,14 @@ class Status
     /**
      * Client object.
      *
-     * @var \Elastica\Client Client object
+     * @var Client Client object
      */
     protected $_client;
 
     /**
      * Constructs Status object.
      *
-     * @param \Elastica\Client $client Client object
+     * @param Client $client Client object
      */
     public function __construct(Client $client)
     {
@@ -51,9 +51,9 @@ class Status
      *
      * @return array Status data
      */
-    public function getData()
+    public function getData(): array
     {
-        if (is_null($this->_data)) {
+        if (null === $this->_data) {
             $this->refresh();
         }
 
@@ -63,9 +63,9 @@ class Status
     /**
      * Returns a list of the existing index names.
      *
-     * @return array Index names list
+     * @return string[] Index names list
      */
-    public function getIndexNames()
+    public function getIndexNames(): array
     {
         $data = $this->getData();
 
@@ -79,9 +79,9 @@ class Status
      *
      * @return bool True if index exists
      */
-    public function indexExists($name)
+    public function indexExists(string $name): bool
     {
-        return in_array($name, $this->getIndexNames());
+        return in_array($name, $this->getIndexNames(), true);
     }
 
     /**
@@ -91,7 +91,7 @@ class Status
      *
      * @return bool True if alias exists
      */
-    public function aliasExists($name)
+    public function aliasExists(string $name): bool
     {
         return count($this->getIndicesWithAlias($name)) > 0;
     }
@@ -101,9 +101,9 @@ class Status
      *
      * @param string $alias Alias name
      *
-     * @return array|\Elastica\Index[] List of Elastica\Index
+     * @return Index[]
      */
-    public function getIndicesWithAlias($alias)
+    public function getIndicesWithAlias(string $alias): array
     {
         $endpoint = new Get();
         $endpoint->setName($alias);
@@ -131,11 +131,11 @@ class Status
     /**
      * Returns response object.
      *
-     * @return \Elastica\Response Response object
+     * @return Response Response object
      */
-    public function getResponse()
+    public function getResponse(): Response
     {
-        if (is_null($this->_response)) {
+        if (null === $this->_response) {
             $this->refresh();
         }
 
@@ -145,9 +145,9 @@ class Status
     /**
      * Return shards info.
      *
-     * @return array Shards info
+     * @return array
      */
-    public function getShards()
+    public function getShards(): array
     {
         $data = $this->getData();
 

@@ -75,11 +75,9 @@ class SerialDiff extends AbstractAggregation
     }
 
     /**
-     * @throws InvalidException If buckets path is not set
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray(): array
+    public function toArray()
     {
         if (!$this->hasParam('buckets_path')) {
             throw new InvalidException('Buckets path is required');
